@@ -1,13 +1,13 @@
 ---
 name: nf-core-utils-migration
-description: Migrate an nf-core pipeline from the vendored utils subworkflows (utils_nextflow_pipeline, utils_nfcore_pipeline, utils_nfschema_plugin) and local helper copies to the nf-core-utils Nextflow plugin, or bump nf-core-utils / nf-schema to a newer version. Use this whenever someone wants to "use nf-core-utils", drop or replace vendored nf-core utils subworkflows, move helpers like getGenomeAttribute, softwareVersionsToYAML, paramsSummaryMultiqc, completionEmail or methodsDescriptionText to `plugin/nf-core-utils`, update the nf-core-utils or nf-schema pin, or debug a run failing with "Missing process or function X ... Did you mean 'X'" after a plugin change (including AWS megatests / Seqera Platform runs).
+description: Migrate an nf-core pipeline from the vendored utils subworkflows (utils_nextflow_pipeline, utils_nfcore_pipeline, utils_nfschema_plugin) and local helper copies to the nf-core-utils Nextflow plugin, or bump nf-core-utils / nf-schema to a newer version. Use this whenever someone wants to "use nf-core-utils", drop or replace vendored nf-core utils subworkflows, move helpers like getGenomeAttribute, softwareVersionsToYAML, paramsSummaryMultiqc, completionEmail or methodsDescriptionText to `plugin/nf-core-utils`, update the nf-core-utils or nf-schema pin, or build MultiQC tool citations from module meta.yml with citationsOnTheFly (publication blocks), or debug a run failing with "Missing process or function X ... Did you mean 'X'" after a plugin change (including AWS megatests / Seqera Platform runs).
 ---
 
 # nf-core-utils migration
 
 Move an nf-core pipeline off vendored utility code and onto the `nf-core-utils` plugin (plus direct `nf-schema` calls), one plugin version at a time, without breaking runs that launch the pipeline with extra configs.
 
-Out of scope, handle separately: tool citations built from module `meta.yml` (`citationsOnTheFly`, `publication` blocks), and nf-test infrastructure (`tests/lib`, snapshot helpers, nft-utils). Mention them as follow-ups if you see them, do not fold them into the migration PR.
+Tool citations built from module `meta.yml` (`citationsOnTheFly`, `publication` blocks) are covered in the Citations section below, as a separate PR after the migration. nf-test infrastructure (`tests/lib`, snapshot helpers, nft-utils) is out of scope: mention it as a follow-up if you see it, do not fold it into the migration PR.
 
 Reference migrations worth reading before starting: nf-core/rnavar#233 (first removal of vendored subworkflows), nf-core/rnavar#252 (genome and versions helpers), nf-core/seqinspector#241 and nf-core/rnaseq#1977 (full replacement). Fetch them with `gh pr diff <n> -R nf-core/<repo>`.
 
@@ -111,6 +111,18 @@ Run at least:
 - `nf-core pipelines lint`
 - the pipeline nf-tests, with `NXF_VER` set to the pipeline's minimum Nextflow version
 - `nextflow run . --help`, `--help_full`, and `--version`, since these paths exit early and are easy to break when inlining `UTILS_NFSCHEMA_PLUGIN` / `UTILS_NEXTFLOW_PIPELINE`
+
+## Citations (separate PR)
+
+Once the helpers come from the plugin, the MultiQC methods description can cite the tools that actually ran, using `citationsOnTheFly` (nf-core-utils 0.7.0 or later) and the `tools:` entries of each module `meta.yml`. Keep this out of the migration PR: it touches many module files, changes snapshots pipeline-wide, and involves attribution decisions the user should make.
+
+Read `references/citations.md` before starting. In short:
+
+1. Wire `channel.topic("versions").collect(flat: false)` into `citationsOnTheFly`, passing tools that run after the collect (MultiQC) as extras.
+2. Predict which tools will log `No citation metadata found` and break snapshots; cite real tools, ignore generic utilities one exact entry at a time.
+3. Agree with the user where citation metadata lives: upstream nf-core/modules, module patches, or a local overlay file.
+4. Take every DOI, author list and title from Crossref / PubMed, never from memory, and ask before replacing a module's cited paper.
+5. Keep module patches limited to `meta.yml`, and read the rendered `Tools used` text from a test run.
 
 ## Gotchas
 

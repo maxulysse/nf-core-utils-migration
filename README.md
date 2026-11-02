@@ -10,8 +10,9 @@ It covers:
 - pinning plugins in every external `plugins {}` block (Seqera Platform megatests, `-c` configs)
 - diagnosing `Missing process or function X ... Did you mean 'X'` after a plugin change
 - verification and PR checklist
+- tool citations from module `meta.yml` with `citationsOnTheFly`, as a separate follow-up PR (`references/citations.md`)
 
-Out of scope: tool citations from module `meta.yml` (`citationsOnTheFly`) and nf-test infrastructure.
+Out of scope: nf-test infrastructure.
 
 Built from the migrations in nf-core/rnavar#233, nf-core/rnavar#252, nf-core/seqinspector#241, nf-core/rnaseq#1977 and nf-core/createpanelrefs#88 / #107.
 

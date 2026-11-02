@@ -116,4 +116,4 @@ imNotification(summary_params, hook_url)
 | `def methodsDescriptionText(mqc_methods_yaml)` with empty tool citations | `methodsDescriptionText(mqc_methods_yaml.toString())`                                                             |
 | `processVersionsFromFile` (rnavar#233 era)                               | replaced by `softwareVersionsToYAML(softwareVersions: ...)` from 0.4.0                                            |
 
-`toolCitationText()` / `toolBibliographyText()` template stubs can be deleted when they are still the unfilled template versions. Filling citations from module `meta.yml` (`citationsOnTheFly`) is a separate change.
+`toolCitationText()` / `toolBibliographyText()` template stubs can be deleted when they are still the unfilled template versions. Filling citations from module `meta.yml` (`citationsOnTheFly`) is a separate change, see `citations.md`.
